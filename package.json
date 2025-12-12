@@ -4,8 +4,11 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node ./src/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "docker:build": "docker build -t points-badge-test .",
+    "docker:run": "docker run --rm --name points-badge-test points-badge-test"
   },
   "repository": {
     "type": "git",

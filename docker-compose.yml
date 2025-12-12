@@ -1,0 +1,8 @@
+services:
+  points-badge-app:
+    container_name: points-badge-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: points-badge-test
+    restart: "no"
