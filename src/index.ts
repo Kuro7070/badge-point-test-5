@@ -1,24 +1,42 @@
 import { User } from './types/user.interface';
 import { Icon } from './types/icon.enum';
+import {getAllUser} from "./user-store";
+import {logAverageSolutionCount, logMostGivenBadge, logTopUsers, logUserCount} from "./logs";
 
-export const getUsersBadge = ( user: User ): Icon | null => {
-  let badge = null;
-  switch ( true ) {
-    case ( user.solutionCount >= 5 && user.solutionCount < 25 ):
-      badge = Icon.BADGE_BRONZE;
-      break;
-    case ( user.solutionCount >= 25 && user.solutionCount < 50 ):
-      badge = Icon.BADGE_SILVER;
-      break;
-    case ( user.solutionCount >= 50 ):
-      badge = Icon.BADGE_GOLD;
-      break;
+
+
+const BADGE_THRESHOLDS: { min: number; icon: Icon }[] = [
+  { min: 2000, icon: Icon.BADGE_GOD_LIKE },
+  { min: 100,  icon: Icon.BADGE_PLATINUM },
+  { min: 50,   icon: Icon.BADGE_GOLD },
+  { min: 25,   icon: Icon.BADGE_SILVER },
+  { min: 5,    icon: Icon.BADGE_BRONZE },
+  { min: 1,    icon: Icon.BADGE_STARTER },
+];
+
+export const getUsersBadge = async ({ solutionCount }: User): Promise<Icon> => {
+
+  for (const { min, icon } of BADGE_THRESHOLDS) {
+    if (solutionCount >= min) {
+      return icon;
+    }
   }
-  return badge;
+
+  return Icon.BADGE_BAD_ASS;
+
 };
 
-function calculateUsersStatistics() {
-  // todo
+export async function calculateUsersStatistics(): Promise<void> {
+  const users = await getAllUser();
+
+  logUserCount(users);
+
+  logAverageSolutionCount(users);
+
+  logTopUsers(users, 5);
+
+  await logMostGivenBadge(users, getUsersBadge);
+
 }
 
 calculateUsersStatistics();
