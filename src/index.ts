@@ -2,6 +2,7 @@ import { User } from './types/user.interface';
 import { Icon } from './types/icon.enum';
 import {getAllUser} from "./user-store";
 import {logAverageSolutionCount, logMostGivenBadge, logTopUsers, logUserCount} from "./logs";
+import {emulateLongProcess} from "./emulate-long-process";
 
 
 
@@ -15,6 +16,8 @@ const BADGE_THRESHOLDS: { min: number; icon: Icon }[] = [
 ];
 
 export const getUsersBadge = async ({ solutionCount }: User): Promise<Icon> => {
+
+  await emulateLongProcess();
 
   for (const { min, icon } of BADGE_THRESHOLDS) {
     if (solutionCount >= min) {
