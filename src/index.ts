@@ -1,5 +1,7 @@
 import { User } from './types/user.interface';
 import { Icon } from './types/icon.enum';
+import {getAllUser} from "./user-store";
+import {logAverageSolutionCount, logMostGivenBadge, logTopUsers, logUserCount} from "./logs";
 
 
 
@@ -24,8 +26,17 @@ export const getUsersBadge = async ({ solutionCount }: User): Promise<Icon> => {
 
 };
 
-function calculateUsersStatistics() {
-  // todo
+export async function calculateUsersStatistics(): Promise<void> {
+  const users = await getAllUser();
+
+  logUserCount(users);
+
+  logAverageSolutionCount(users);
+
+  logTopUsers(users, 5);
+
+  await logMostGivenBadge(users, getUsersBadge);
+
 }
 
 calculateUsersStatistics();
