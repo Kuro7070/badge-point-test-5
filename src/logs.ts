@@ -30,13 +30,26 @@ export function logTopUsers(users: User[], limit = 5): void {
     console.log('\n');
 }
 
+const MAX_PARALLEL_BADGE_CALLS = 20;
+
 export async function logMostGivenBadge(users: User[], getUsersBadge: (user: User) => Promise<Icon>): Promise<void> {
-    const usersWithBadges = await Promise.all(
-        users.map(async (user) => ({
-            user,
-            badge: await getUsersBadge(user),
-        }))
-    );
+    const usersWithBadges: { user: User; badge: Icon }[] = [];
+
+    for (let i = 0; i < users.length; i += MAX_PARALLEL_BADGE_CALLS) {
+
+        const batch = users.slice(i, i + MAX_PARALLEL_BADGE_CALLS);
+        console.log(`Start Batch: ${i} `);
+
+        const batchResults = await Promise.all(
+
+            batch.map(async (user) => ({
+                user,
+                badge: await getUsersBadge(user),
+            }))
+        );
+
+        usersWithBadges.push(...batchResults);
+    }
 
     const badgeCounts = new Map<Icon, number>();
     for (const { badge } of usersWithBadges) {
