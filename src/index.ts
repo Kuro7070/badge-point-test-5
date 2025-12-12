@@ -9,7 +9,7 @@ const BADGE_THRESHOLDS: { min: number; icon: Icon }[] = [
   { min: 5,  icon: Icon.BADGE_BRONZE },
 ];
 
-export const getUsersBadge = ({ solutionCount }: User): Icon | null => {
+export const getUsersBadge = async ({ solutionCount }: User): Promise<Icon | null> => {
   for (const { min, icon } of BADGE_THRESHOLDS) {
     if (solutionCount >= min) {
       return icon;
